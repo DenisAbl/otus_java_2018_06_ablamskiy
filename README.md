@@ -1,2 +1,7 @@
-# otus_java_2018_06_ablamskiy
-группа 2018-06 курса "Разработчик Java" в OTUS
+# курс "Разработчик Java" в OTUS
+
+группа 2018-06
+
+Абламский Денис
+
+ablamskiy.d@gmail.com
