@@ -7,12 +7,12 @@ public class MySizeOf {
     private static long startMemory = 0;
     private static long finishMemory = 0;
 
-    public static long sizeOf(Supplier<?> supplier){
+    public static void sizeOf(Supplier<?> supplier){
 
         startMemory = getUsedMemory();
         Object[] arrayOfObjects = new Object[NUMBER_OF_OBJECTS];
         finishMemory = getUsedMemory();
-        System.out.println("Reference size: " + (finishMemory - startMemory)/arrayOfObjects.length + "Bytes");
+        System.out.println("Reference size: " + (finishMemory - startMemory)/arrayOfObjects.length + " bytes");
 
         startMemory = getUsedMemory();
 
@@ -21,7 +21,7 @@ public class MySizeOf {
          }
          finishMemory = getUsedMemory();
 
-        return ((finishMemory - startMemory)/arrayOfObjects.length);
+        System.out.println("Object size: " + (finishMemory - startMemory)/arrayOfObjects.length + " bytes");
     }
 
     private static long getUsedMemory() {
