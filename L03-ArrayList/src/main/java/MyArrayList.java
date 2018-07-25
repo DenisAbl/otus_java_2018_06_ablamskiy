@@ -116,92 +116,74 @@ public class MyArrayList<T> implements List<T> {
 // Нереализованные методы итератора
         @Override
         public void add(T t) {
-            throw new RuntimeException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void remove() {
-            throw new RuntimeException();
+            throw new UnsupportedOperationException();
         }
     }
-
-    public static void main(String[] args) {
-        List<Integer> integerList = new MyArrayList<Integer>();
-
-        //добавляем в коллекцию элементы
-        Collections.addAll(integerList,6,4,5,3,2000,-3234);
-
-        //упорядочиваем по порядку
-        Collections.sort(integerList, Comparator.naturalOrder());
-
-        //создаем новый объект ArrayList в который копируем ранее созданный список.
-        List<Integer> additionalArrayList = new ArrayList<>();
-        Collections.addAll(additionalArrayList,-89,-9,-1000000,0,300,8);
-        Collections.copy(additionalArrayList,integerList);
-        additionalArrayList.forEach(System.out::println);
-
-    }
-
 
 
 //Нереализованные методы для MyArrayList
 
     public void clear() {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
-    public boolean isEmpty() { throw new RuntimeException(); }
+    public boolean isEmpty() { throw new UnsupportedOperationException(); }
 
     public boolean contains(Object o) {
         return false;
     }
 
     public boolean addAll(Collection c) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public boolean addAll(int index, Collection c) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public Object set(int index, Object element) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
-    public void add(int index, Object element) { throw new RuntimeException(); }
+    public void add(int index, Object element) { throw new UnsupportedOperationException(); }
 
-    public boolean remove(Object o) { throw new RuntimeException(); }
+    public boolean remove(Object o) { throw new UnsupportedOperationException(); }
 
     public int indexOf(Object o) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public int lastIndexOf(Object o) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public ListIterator listIterator(int index) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public List subList(int fromIndex, int toIndex) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public boolean retainAll(Collection c) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public boolean removeAll(Collection c) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public boolean containsAll(Collection c) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     public Object[] toArray(Object[] a) {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
 }
