@@ -20,12 +20,10 @@ public class MyTestFramework {
     }
 
     public void runTests(Class type,String...args) {
-
-        //Get a Map of Methods and corresponding Annotations
-        methodsAndAnnotations = ReflectionHelper.getAnnotatedMethods(ReflectionHelper.instantiate(type, args));
-
         //Create an instance of test class to invoke a methods
         instance = ReflectionHelper.instantiate(type, args);
+        //Get a Map of Methods and corresponding Annotations
+        methodsAndAnnotations = ReflectionHelper.getAnnotatedMethods(instance);
 
         while(hasTests()) {
             invokeMethodWithAnnotation("@annotations.Before()");
