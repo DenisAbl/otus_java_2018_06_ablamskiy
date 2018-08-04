@@ -1,4 +1,6 @@
+import annotations.After;
 import annotations.Before;
+import annotations.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -20,31 +22,32 @@ public class MyTestFramework {
     }
 
     public void runTests(Class type,String...args) {
-        //Create an instance of test class to invoke a methods
-        instance = ReflectionHelper.instantiate(type, args);
+
         //Get a Map of Methods and corresponding Annotations
-        methodsAndAnnotations = ReflectionHelper.getAnnotatedMethods(instance);
+        methodsAndAnnotations = ReflectionHelper.getAnnotatedMethods(ReflectionHelper.instantiate(type, args));
 
         while(hasTests()) {
-            invokeMethodWithAnnotation("@annotations.Before()");
-            invokeMethodWithAnnotation("@annotations.Test()");
-            invokeMethodWithAnnotation("@annotations.After()");
+            //Create an instance of test class to invoke a methods
+            instance = ReflectionHelper.instantiate(type, args);
+            invokeMethodWithAnnotation(Before.class);
+            invokeMethodWithAnnotation(Test.class);
+            invokeMethodWithAnnotation(After.class);
         }
     }
 
-    private void invokeMethodWithAnnotation(String annotationName){
+    private void invokeMethodWithAnnotation(Class annotationName){
         testDone = false;
         Iterator<Map.Entry<Method,List<Annotation>>> iterator = methodsAndAnnotations.entrySet().iterator();
         while (iterator.hasNext() && !testDone) {
             Map.Entry<Method,List<Annotation>> entry = iterator.next();
             entry.getValue().forEach(annotation -> {
-            if (annotation.toString().equals(annotationName)) {
+            if (annotationName.isInstance(annotation)) {
                     try {
                         entry.getKey().invoke(this.instance);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
-                    if(annotationName.equals("@annotations.Test()")){
+                    if(annotation instanceof Test){
                         iterator.remove();
                         testDone = true;
                     }
@@ -57,7 +60,7 @@ public class MyTestFramework {
         this.hasTests = false;
         this.methodsAndAnnotations.forEach((method,annotationList)-> {
             for (Annotation annotation : annotationList) {
-                if(annotation.toString().equals("@annotations.Test()")){
+                if(annotation instanceof Test){
                     this.hasTests = true;
                 }
             }
