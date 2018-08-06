@@ -14,7 +14,6 @@ import java.util.Map;
 public class MyTestFramework {
 
     private HashMap<Method,List<Annotation>> methodsAndAnnotations;
-    private Object instance;
     private boolean hasTests = false;
     private boolean testDone = false;
 
@@ -28,14 +27,14 @@ public class MyTestFramework {
 
         while(hasTests()) {
             //Create an instance of test class to invoke a methods
-            instance = ReflectionHelper.instantiate(type, args);
-            invokeMethodWithAnnotation(Before.class);
-            invokeMethodWithAnnotation(Test.class);
-            invokeMethodWithAnnotation(After.class);
+            Object instance = ReflectionHelper.instantiate(type, args);
+            invokeMethodWithAnnotation(Before.class, instance);
+            invokeMethodWithAnnotation(Test.class, instance);
+            invokeMethodWithAnnotation(After.class, instance);
         }
     }
 
-    private void invokeMethodWithAnnotation(Class annotationName){
+    private void invokeMethodWithAnnotation(Class annotationName, Object instance){
         testDone = false;
         Iterator<Map.Entry<Method,List<Annotation>>> iterator = methodsAndAnnotations.entrySet().iterator();
         while (iterator.hasNext() && !testDone) {
@@ -43,7 +42,7 @@ public class MyTestFramework {
             entry.getValue().forEach(annotation -> {
             if (annotationName.isInstance(annotation)) {
                     try {
-                        entry.getKey().invoke(this.instance);
+                        entry.getKey().invoke(instance);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
