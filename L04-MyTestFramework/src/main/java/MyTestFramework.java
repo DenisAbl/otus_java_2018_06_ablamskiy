@@ -24,10 +24,11 @@ public class MyTestFramework {
 
         //Get a Map of Methods and corresponding Annotations
         methodsAndAnnotations = ReflectionHelper.getAnnotatedMethods(ReflectionHelper.instantiate(type, args));
+        Object instance = null;
 
         while(hasTests()) {
             //Create an instance of test class to invoke a methods
-            Object instance = ReflectionHelper.instantiate(type, args);
+            instance = ReflectionHelper.instantiate(type, args);
             invokeMethodWithAnnotation(Before.class, instance);
             invokeMethodWithAnnotation(Test.class, instance);
             invokeMethodWithAnnotation(After.class, instance);
