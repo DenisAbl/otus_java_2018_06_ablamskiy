@@ -1,0 +1,93 @@
+Copy+MarkSweepCompact
+
+Young Generation collection quantity: 2 per minute. Duration: 170 ms per minute
+Old Generation collection quantity: 0 per minute. Duration: 0 ms per minute
+
+Young Generation collection quantity: 2 per minute. Duration: 222 ms per minute
+Old Generation collection quantity: 0 per minute. Duration: 0 ms per minute
+
+Young Generation collection quantity: 2 per minute. Duration: 204 ms per minute
+Old Generation collection quantity: 0 per minute. Duration: 0 ms per minute
+
+Young Generation collection quantity: 1 per minute. Duration: 0 ms per minute
+Old Generation collection quantity: 1 per minute. Duration: 330 ms per minute
+
+Young Generation collection quantity: 2 per minute. Duration: 17 ms per minute
+Old Generation collection quantity: 3 per minute. Duration: 896 ms per minute
+
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+
+------------------------------------------------------------------------------------
+
+PS Scavenge + PS MarkSweep
+
+Young Generation collections quantity: 2 per minute. Duration: 331 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 2 per minute. Duration: 979 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 0 per minute. Duration: 0 ms
+Old Generation collections quantity: 1 per minute. Duration: 425 ms
+
+Young Generation collections quantity: 0 per minute. Duration: 0 ms
+Old Generation collections quantity: 1 per minute. Duration: 446 ms
+
+Young Generation collections quantity: 4 per minute. Duration: 240 ms
+Old Generation collections quantity: 2 per minute. Duration: 1184 ms
+
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+
+------------------------------------------------------------------------------------
+ParNew + ConcurrentMarkSweep
+
+
+Young Generation collections quantity: 2 per minute. Duration: 230 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 2 per minute. Duration: 547 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 2 per minute. Duration: 452 ms
+Old Generation collections quantity: 6 per minute. Duration: 31494 ms
+
+Young Generation collections quantity: 2 per minute. Duration: 21 ms
+Old Generation collections quantity: 5 per minute. Duration: 21607 ms
+
+Young Generation collections quantity: 2 per minute. Duration: 53 ms
+Old Generation collections quantity: 7 per minute. Duration: 27261 ms
+
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+
+-------------------------------------------------------------------------------------
+G1
+
+Young Generation collections quantity: 6 per minute. Duration: 2089 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 6 per minute. Duration: 3534 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 7 per minute. Duration: 2209 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 5 per minute. Duration: 52 ms
+Old Generation collections quantity: 1 per minute. Duration: 404 ms
+
+Young Generation collections quantity: 1 per minute. Duration: 18 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 4 per minute. Duration: 91 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 0 per minute. Duration: 0 ms
+Old Generation collections quantity: 0 per minute. Duration: 0 ms
+
+Young Generation collections quantity: 3 per minute. Duration: 51 ms
+Old Generation collections quantity: 2 per minute. Duration: 1648 ms
+
+
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+
+
+
