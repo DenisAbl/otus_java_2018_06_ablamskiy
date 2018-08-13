@@ -14,6 +14,7 @@ public class GcMonitor {
         for (GarbageCollectorMXBean gcBean : garbageCollectorBeansList) {
             NotificationEmitter emitter = (NotificationEmitter) gcBean;
             emitter.addNotificationListener(new GcNotificationListener(), null, null);
+
         }
     }
 }
