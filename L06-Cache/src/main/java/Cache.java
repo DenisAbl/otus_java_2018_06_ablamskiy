@@ -4,6 +4,5 @@ public interface Cache<K,V> {
 
   V getElement(K key);
 
-  void updateCache();
-
+  void updateCache(K key);
 }
