@@ -1,22 +1,23 @@
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.stream.IntStream;
-
 import static java.util.stream.IntStream.*;
 
-public class SoftReferenceCacheTest {
+/*
+-ea
+-Xms128m
+-Xmx128m
+ */
 
-    private static Logger logger = LoggerFactory.getLogger(SoftReferenceCacheTest.class);
+public class SoftReferenceCacheTest {
 
     @Test
     public void addElementsToEternalCache() throws InterruptedException {
         SoftReferenceCache<Integer,BigObject> cache = new SoftReferenceCache<>(10,0,0,true);
-        range(0, 9).forEach(i -> cache.addElement(i, new BigObject()));
-        logger.info("Cache size  = " + cache.getSize());
-        for (int i = 0; i <cache.getSize(); i++) logger.info(cache.getElement(i) == null ? "null" : cache.getElement(i).toString());
+        range(0, 12).forEach(i -> cache.addElement(i, new BigObject()));
+        System.out.println("Cache size  = " + cache.getSize());
+        System.out.println("Cache contains:");
+        for (int i = 0; i <cache.getSize(); i++) System.out.println(cache.getElement(i));
+        System.out.println("Miss quantity: " + cache.getMissCount());
+        System.out.println("Hit quantity: " + cache.getHitCount());
         cache.cacheShutdown();
     }
 

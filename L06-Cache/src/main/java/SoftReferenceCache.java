@@ -72,19 +72,6 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
             }
         }
 
-//        if (isEternal){
-//            cacheMap.entrySet().removeIf(entry -> (entry.getValue().get() == null));
-//            logger.info("Cache refreshing finished");}
-//
-//        else if(idleTimeLimitMs == 0){
-//        cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementLifeTime() >= lifeTimeLimitMs));}
-//
-//            else if (lifeTimeLimitMs == 0){
-//            cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementIdleTime() >= idleTimeLimitMs));}
-//
-//                else cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementLifeTime() >= lifeTimeLimitMs) ||
-//                                                            entry.getValue().getElementIdleTime() >= idleTimeLimitMs);
-
     }
 
     public long getSize() {
