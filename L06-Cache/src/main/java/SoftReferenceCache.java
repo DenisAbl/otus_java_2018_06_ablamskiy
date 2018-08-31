@@ -48,7 +48,7 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
     @Override
     public V getElement(K key) {
         CacheElement<V> element = cacheMap.get(key);
-        if (element == null) {
+        if (element == null || element.get() == null) {
             misses++;
             return null;
         }
@@ -71,6 +71,7 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
                 timer.schedule(idleTimerTask, idleTimeLimitMs, idleTimeLimitMs);
             }
         }
+        else {cacheMap.entrySet().removeIf(entry -> entry.getValue() == null || entry.getValue().get() == null);}
 
     }
 
