@@ -23,4 +23,12 @@ public class CacheElement<V> extends SoftReference<V> {
         this.lastAccessTime = System.currentTimeMillis();
     }
 
+    public long getElementCreationTime() {
+        return elementCreationTime;
+    }
+
+    public long getLastAccessTime() {
+        return lastAccessTime;
+    }
+
 }

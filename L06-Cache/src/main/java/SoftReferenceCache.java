@@ -22,7 +22,7 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
 
     ScheduledExecutorService executor;
 
-    private volatile Map<K,CacheElement<V>> cacheMap = new HashMap<>();
+    private volatile Map<K,CacheElement<V>> cacheMap = new ConcurrentHashMap<>();
 
     private static Logger logger = LoggerFactory.getLogger(SoftReferenceCache.class);
 
@@ -33,7 +33,7 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
         this.isEternal = (lifeTimeLimitMs == 0 && idleTimeLimitMs == 0) || isEternal;
 
         executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(this::updateCache,500,50,TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(this::updateCache,50,50,TimeUnit.MILLISECONDS);
 
         logger.info("Cache created");
     }
@@ -51,41 +51,30 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
     @Override
     public V getElement(K key) {
         CacheElement<V> element = cacheMap.get(key);
-        if (element == null) {
+        if (element == null || element.get() == null) {
             cacheMap.remove(key);
+            misses++;
             return null;
         }
         else
+            hits++;
+            element.setLastAccessTime();
         return element.get();
     }
 
     @Override
     public synchronized void updateCache() {
         if (isEternal){
-//            cacheMap.entrySet().removeIf(entry -> (entry.getValue().get() == null));
-//            logger.info("Cache refreshing finished");}
-            int count = 0;
-        for(Iterator<Map.Entry<K, CacheElement<V>>> it = cacheMap.entrySet().iterator(); it.hasNext(); ) {
+            cacheMap.entrySet().removeIf(entry -> (entry.getValue().get() == null));
+            logger.info("Cache refreshing finished");}
 
-            Map.Entry<K, CacheElement<V>> entry = it.next();
-            System.out.println(entry.getValue() + " " + count++);
-            }}
+        if(idleTimeLimitMs == 0){
+            cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementLifeTime() >= lifeTimeLimitMs));
+            logger.info("Cache refreshing finished");}
 
-//            cacheMap = cacheMap.entrySet().stream()
-//                    .filter(e -> e.getValue().getElement() != null)
-//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-//            cacheMap.values().removeAll(Collections.singleton(null));}
-
-        else if(idleTimeLimitMs == 0){
-        cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementLifeTime() >= lifeTimeLimitMs));}
-
-            else if (lifeTimeLimitMs == 0){
-            cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementIdleTime() >= idleTimeLimitMs));}
-
-                else cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementLifeTime() >= lifeTimeLimitMs) ||
-                                                            entry.getValue().getElementIdleTime() >= idleTimeLimitMs);
-
+        if (lifeTimeLimitMs == 0){
+            cacheMap.entrySet().removeIf(entry -> (entry.getValue().getElementIdleTime() >= idleTimeLimitMs));
+            logger.info("Cache refreshing finished");}
     }
 
     public long getSize() {
@@ -96,4 +85,11 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
         executor.shutdown();
     }
 
+    public long getMissCount() {
+        return misses;
+    }
+
+    public long getHitCount() {
+        return hits;
+    }
 }
