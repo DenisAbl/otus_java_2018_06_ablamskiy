@@ -32,7 +32,18 @@ public class SoftReferenceCacheTest {
 
     }
 
+    @Test
+    public void restrictedIdleTimeElementsCache() throws InterruptedException {
+        SoftReferenceCache<Integer,BigObject> cache = new SoftReferenceCache<>(10,0,200,false);
+        for (int i = 0; i <20; i++) cache.addElement(i, new BigObject());
+        System.out.println("Cache size before delay = " + cache.getSize());
+        for (int i = 0; i <20; i++) System.out.println(cache.getElement(i));
+        Thread.sleep(400);
+        System.out.println("Cache size after delay = " + cache.getSize());
+        cache.cacheShutdown();
+        Assert.assertEquals("Cache size unchanged",0,cache.getSize());
 
+    }
 
     static class BigObject {
 
