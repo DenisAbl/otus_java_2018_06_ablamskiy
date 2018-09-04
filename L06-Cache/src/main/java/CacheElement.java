@@ -1,13 +1,14 @@
 import java.lang.ref.SoftReference;
 import java.util.Objects;
 
-public class CacheElement<V> extends SoftReference<V> {
+public class CacheElement<V>{
 
+    private SoftReference<V> value;
     private long elementCreationTime;
     private long lastAccessTime;
 
     public CacheElement(V referent) {
-        super(referent);
+        this.value = new SoftReference<>(referent);
         elementCreationTime = lastAccessTime = System.currentTimeMillis();
     }
 
@@ -29,6 +30,10 @@ public class CacheElement<V> extends SoftReference<V> {
 
     public long getLastAccessTime() {
         return lastAccessTime;
+    }
+
+    public V get(){
+        return value.get();
     }
 
 }

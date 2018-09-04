@@ -2,12 +2,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class SoftReferenceCache<K,V> implements Cache<K,V> {
     private static final int TIME_THRESHOLD_MS = 5;
