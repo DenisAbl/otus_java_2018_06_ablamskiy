@@ -14,6 +14,7 @@ public class SoftReferenceCacheTest {
     public void addElementsToEternalCache() throws InterruptedException {
         SoftReferenceCache<Integer,BigObject> cache = new SoftReferenceCache<>(10,0,0,true);
         range(0, 20).forEach(i -> cache.addElement(i, new BigObject()));
+        for (int i = 0; i <20; i++) System.out.println(cache.getElement(i));
         System.out.println("Cache size before delay = " + cache.getSize());
         for (int i = 0; i <20; i++) System.out.println(cache.getElement(i));
         System.out.println("Cache hits = " + cache.getHitCount());

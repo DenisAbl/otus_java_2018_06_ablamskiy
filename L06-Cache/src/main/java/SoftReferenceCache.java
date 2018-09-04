@@ -1,15 +1,14 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicLong;
+
 
 public class SoftReferenceCache<K,V> implements Cache<K,V> {
 
@@ -17,23 +16,25 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
     private final int lifeTimeLimitMs;
     private final int idleTimeLimitMs;
     private final boolean isEternal;
-    private long misses;
-    private long hits;
+    private AtomicLong misses;
+    private AtomicLong hits;
 
-    ScheduledExecutorService executor;
+    private ScheduledExecutorService executor;
 
     private volatile Map<K,CacheElement<V>> cacheMap = new ConcurrentHashMap<>();
 
     private static Logger logger = LoggerFactory.getLogger(SoftReferenceCache.class);
 
     public SoftReferenceCache(long size, int lifeTimeLimitMs, int idleTimeLimitMs, boolean isEternal){
+        this.misses = new AtomicLong(0);
+        this.hits = new AtomicLong(0);
         this.size = size;
         this.lifeTimeLimitMs = lifeTimeLimitMs > 0 ? lifeTimeLimitMs : 0;
         this.idleTimeLimitMs = idleTimeLimitMs > 0 ? idleTimeLimitMs : 0;
         this.isEternal = (lifeTimeLimitMs == 0 && idleTimeLimitMs == 0) || isEternal;
 
         executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(this::updateCache,50,50,TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(this::updateCache,50,50,TimeUnit.MILLISECONDS);
 
         logger.info("Cache created");
     }
@@ -53,11 +54,11 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
         CacheElement<V> element = cacheMap.get(key);
         if (element == null || element.get() == null) {
             cacheMap.remove(key);
-            misses++;
+            misses.incrementAndGet();
             return null;
         }
         else
-            hits++;
+            hits.incrementAndGet();
             element.setLastAccessTime();
         return element.get();
     }
@@ -86,10 +87,10 @@ public class SoftReferenceCache<K,V> implements Cache<K,V> {
     }
 
     public long getMissCount() {
-        return misses;
+        return misses.get();
     }
 
     public long getHitCount() {
-        return hits;
+        return hits.get();
     }
 }
