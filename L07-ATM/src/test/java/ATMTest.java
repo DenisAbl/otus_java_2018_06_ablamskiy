@@ -39,7 +39,6 @@ public class ATMTest {
     public void testDepositMoney(){
         long startSum = atm.getTotalSum();
         BigDecimal startBalance = new BigDecimal(atm.displayBalance(clientAccount));
-        System.out.println("strat =" + startSum);
         Map<Integer,Integer> depositedMoney = new HashMap<>();
         depositedMoney.put(Cassette.FIVE_THOUSANDS,20);
         depositedMoney.put(Cassette.FIVE_HUNDREDS,10);
@@ -48,7 +47,6 @@ public class ATMTest {
 
         atm.depositMoney(depositedMoney,clientAccount);
         BigDecimal finishBalance = new BigDecimal(atm.displayBalance(clientAccount));
-        System.out.println("finish =" + sum[0]);
 
         Assert.assertEquals("Account balance is incorrect", sum[0], finishBalance.subtract(startBalance).longValue());
         Assert.assertEquals("ATM balance is incorrect",sum[0]+startSum, atm.getTotalSum());

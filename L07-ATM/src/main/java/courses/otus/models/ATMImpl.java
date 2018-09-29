@@ -166,8 +166,6 @@ public class ATMImpl implements ATM {
 
     public void depositMoney(Map<Integer,Integer> insertedMoney,ClientAccount clientAccount){
         int depositedSum = 0;
-//        insertedMoney.forEach((k,v)->{
-//            withdrawCassettes.get(k).setBankNoteAmount(withdrawCassettes.get(k).getBankNoteAmount() + v); });
         for (Map.Entry<Integer,Integer> pair : insertedMoney.entrySet()) {
             withdrawCassettes.get(pair.getKey()).setBankNoteAmount(withdrawCassettes.get(pair.getKey()).getBankNoteAmount() + pair.getValue());
             depositedSum += pair.getKey() * pair.getValue();
