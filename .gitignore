@@ -17,3 +17,5 @@
 #common
 **/out
 **.class
+
+*.log
