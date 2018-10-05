@@ -1,5 +1,7 @@
 package courses.otus;
 
+import courses.otus.exceptions.NoSuchOperationException;
+
 public enum Operation {
 
     WITHDRAW(1), DEPOSIT(2), BALANCE(3), EXIT(4);
@@ -16,7 +18,7 @@ public enum Operation {
 
     //скорее всего велосипед, поискать решение
 
-    public static Operation getOperationById(int id){
+    public static Operation getOperationById(int id) throws NoSuchOperationException {
         Operation operation = null;
         for (Operation op : Operation.values()){
             if (op.getId() == id){
@@ -24,6 +26,7 @@ public enum Operation {
                 break;
             }
         }
+        if (operation == null) { throw new NoSuchOperationException("Incorrect operation number");}
         return operation;
     }
 

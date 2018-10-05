@@ -1,10 +1,14 @@
 package courses.otus.models;
 
+import courses.otus.exceptions.InsufficientFundsException;
+
+import java.util.Map;
+
 public interface ATM {
 
-    void withdrawMoney();
+    Map<Integer, Integer> withdrawMoney(int moneyAmount, ClientAccount clientAccount) throws InsufficientFundsException;
 
-    void depositMoney();
+    void depositMoney(Map<Integer,Integer> insertedMoney, ClientAccount clientAccount);
 
     void displayBalance();
 

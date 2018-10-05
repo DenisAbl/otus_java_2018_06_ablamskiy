@@ -15,7 +15,7 @@ public class ATMTest {
 
     ATMImpl atm;
     ClientAccount clientAccount;
-    int initBanknoteAmount = 1;
+    int initBanknoteAmount = 2;
 
     @Before
     public void setUp() {

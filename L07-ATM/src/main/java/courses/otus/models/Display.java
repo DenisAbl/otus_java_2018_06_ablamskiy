@@ -2,36 +2,46 @@ package courses.otus.models;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class Display {
 
     private Logger logger = LoggerFactory.getLogger(Display.class);
     private Scanner scanner = new Scanner(System.in);
+    private String msg;
 
     public void showStartMessage(){
-        logger.info("Please insert your card (just press enter)");
+        msg = "Please insert your card (just press enter)";
+        showMessage(msg);
         scanner.nextLine();
     }
 
     public void showCompletionMessage(){
-        logger.info("Operation successfully completed"+"\n"+"Have a nice day!");
+        msg = "Operation successfully completed"+"\n"+"Have a nice day!";
+        showMessage(msg);
     }
 
     public void showMainMenu(){
-        logger.info("Choose operation: \n 1. Withdraw. \n 2. Deposit. \n 3. Display balance. \n 4. Exit. \n ");
+        msg = "Choose operation: \n 1. Withdraw. \n 2. Deposit. \n 3. Display balance. \n 4. Exit. \n ";
+        showMessage(msg);
     }
-    public void showBalance(String balance){
-        logger.info("Your account balance is " + balance);
+    public void showBalance(String msg){
+        showMessage(msg);
     }
 
     public void showWithdrawRequestMenu(){
-        logger.info("Please enter money amount you want to retrieve");
+        msg = "Please enter money amount you want to retrieve";
+        showMessage(msg);
     }
 
     public void showDepositRequestMenu(){
-        logger.info("Please enter money amount you want to deposit");
+        msg = "Please enter money amount you want to deposit";
+        showMessage(msg);
     }
+
+    private void showMessage(String msg){
+        System.out.println(msg);
+        logger.info(msg);
+    }
+
 }

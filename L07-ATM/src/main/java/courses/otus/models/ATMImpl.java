@@ -3,6 +3,7 @@ package courses.otus.models;
 import courses.otus.Operation;
 import courses.otus.exceptions.IncorrectPinFormatException;
 import courses.otus.exceptions.InsufficientFundsException;
+import courses.otus.exceptions.NoSuchOperationException;
 import courses.otus.service.DBServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,6 @@ public class ATMImpl implements ATM {
     public ATMImpl(int initialBankNoteAmount){
         INITIAL_BANKNOTE_AMOUNT = initialBankNoteAmount;
         init();
-
     }
 
     private void init() {
@@ -71,40 +71,37 @@ public class ATMImpl implements ATM {
         while(true) {
             display.showStartMessage();
             accountId = cardReader.getAccountId();
-
             while (!isPinValid) {
                 try {
-                    logger.info("Enter PIN");
+                    showMessage("Enter PIN");
                     validatePIN(keyboard.getPIN());
                 } catch (IncorrectPinFormatException e) {
-                    logger.error("Incorrect pin format. Make another try.");
+                    showMessage("Incorrect pin format. Make another try.");
                 }
             }   if (isPinValid) startSession();
         }
     }
 
-    @Override
-    public void withdrawMoney() {
 
+    public void withdrawMoney() {
         if (getTotalSum() != 0) {
             display.showWithdrawRequestMenu();
             int moneyAmount;
-
             do {
-                logger.info("Please enter amount aliquot 50");
+                showMessage("Please enter amount aliquot 50");
                 moneyAmount = Integer.parseInt(keyboard.getMoneyAmount());
             }
             while (moneyAmount % 50 != 0 || moneyAmount == 0);
-
             try {withdrawMoney(moneyAmount, clientAccount);}
             catch(InsufficientFundsException e){
                 logger.info(e.getMessage());}
         }
-
-        else logger.info("No money, encashment expected");
+        else {
+            showMessage("No money, encashment expected");
+        }
     }
-
-    public Map<Integer,Integer> withdrawMoney(int moneyAmount, ClientAccount clientAccount) throws InsufficientFundsException {
+    @Override
+    public Map<Integer, Integer> withdrawMoney(int moneyAmount, ClientAccount clientAccount) throws InsufficientFundsException {
         Map<Integer,Integer> banknoteMap;
         BigDecimal withdrawAmount = new BigDecimal(moneyAmount).setScale(2, RoundingMode.DOWN);
         BigDecimal currentBalance = dbService.getClientAccountById(clientAccount.getAccountId()).getBalance();
@@ -143,12 +140,10 @@ public class ATMImpl implements ATM {
             dispenser.collectBanknotes(tempDispenserMap);
 
         }
-        else logger.info("There are not enough funds to accomplish your request.");
+        else showMessage("There are not enough funds to accomplish your request.");
         return tempValue == 0;
-
     }
 
-    @Override
     public void depositMoney() {
         Map<Integer,Integer> insertedMoney = new HashMap<>();
         display.showDepositRequestMenu();
@@ -156,14 +151,14 @@ public class ATMImpl implements ATM {
         int banknoteAmount;
         while (true) {
             banknoteNominal = Integer.parseInt(keyboard.getMoneyAmount());
-                if(banknoteNominal == -1) break;
-             banknoteAmount = Integer.parseInt(keyboard.getMoneyAmount());
-             insertedMoney.put(banknoteNominal,banknoteAmount);
+            if(banknoteNominal == -1) break;
+            banknoteAmount = Integer.parseInt(keyboard.getMoneyAmount());
+            insertedMoney.put(banknoteNominal,banknoteAmount);
         }
-
         depositMoney(insertedMoney, clientAccount);
     }
 
+    @Override
     public void depositMoney(Map<Integer,Integer> insertedMoney,ClientAccount clientAccount){
         int depositedSum = 0;
         for (Map.Entry<Integer,Integer> pair : insertedMoney.entrySet()) {
@@ -201,32 +196,36 @@ public class ATMImpl implements ATM {
     private void validatePIN(String pin) throws IncorrectPinFormatException {
         if (pin.length() == 4) {
             if (pin.equals(dbService.getPinByAccountId(this.accountId))){
+                showMessage("PIN is correct");
                 isPinValid = true;
-                logger.info("PIN is correct");
             }
-            else{ isPinValid = false;
-                logger.info("PIN isn't correct. Make another try.");}
+            else{
+                isPinValid = false;
+                showMessage("PIN isn't correct. Make another try.");
+            }
         }
         else throw new IncorrectPinFormatException();
     }
 
-    private void startSession(){
-        isSessionFinished = false;
+    private void startSession() {
         clientAccount = dbService.getClientAccountById(accountId);
-
         while(!isSessionFinished) {
             display.showMainMenu();
             int userChoice = Integer.parseInt(keyboard.getOperationNumber());
             while (userChoice < 1 || userChoice > 4) {
-                logger.info("Please enter valid operation number");
+                showMessage("Please enter valid operation number");
                 userChoice = Integer.parseInt(keyboard.getOperationNumber());
             }
+            try {
             operation = Operation.getOperationById(userChoice);
-            processOperationChoice(operation);
+            processOperationChoice(operation);}
+            catch (NoSuchOperationException e){
+                    logger.error(e.getMessage());
+                    e.printStackTrace();}
         }
     }
 
-    private void processOperationChoice(Operation operation){
+    private void processOperationChoice(Operation operation) throws NoSuchOperationException {
         switch (operation){
             case WITHDRAW:
                 withdrawMoney();
@@ -240,6 +239,8 @@ public class ATMImpl implements ATM {
             case EXIT:
                 finishSession();
                 break;
+            default:
+                throw new NoSuchOperationException("Incorrect operation");
         }
     }
 
@@ -251,4 +252,10 @@ public class ATMImpl implements ATM {
         clientAccount = dbService.getClientAccountById(clientAccountId);
         return clientAccount;
     }
+
+    private void showMessage(String msg){
+        System.out.println(msg);
+        logger.info(msg);
+    }
+
 }
