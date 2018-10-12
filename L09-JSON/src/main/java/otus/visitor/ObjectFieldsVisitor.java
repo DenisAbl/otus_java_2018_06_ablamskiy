@@ -1,88 +1,144 @@
 package otus.visitor;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
+import java.util.*;
 
 public class ObjectFieldsVisitor implements Visitor {
 
-    public String visit(Byte byteField){
-        return byteField.toString();
+//    private JSONObject jsonObject;
+
+//    public ObjectFieldsVisitor() {}
+
+    public void visit(Byte byteField, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,byteField);
     }
 
-    public String visit(Boolean booleanField){
-        return booleanField.toString();}
-
-    public String visit(Character character){return character.toString();}
-
-    public String visit(Short shortField){return shortField.toString();}
-
-    public String visit(Integer integer){
-        return integer.toString();
+    public void visit(Boolean booleanField, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,booleanField);
     }
 
-    public String visit(Long longField){
-        return longField.toString();
+    public void visit(Character character, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,character);
     }
 
-    public String visit(Float floatField){return floatField.toString();}
-
-    public String visit(Double doubleField){return doubleField.toString();}
-
-    public String visit(String string){
-        return string;
+    public void visit(Short shortField, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,shortField);
     }
 
-    public String visit(Collection collection){
-        return collection.toString();
+    public void visit(Integer integer, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,integer);
     }
 
-    public void visitObject(Object object){
-        Field[] fields = object.getClass().getDeclaredFields();
-        for (Field field : fields){
-        dispatch(field);}
+    public void visit(Long longField, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,longField);
+    }
+
+    public void visit(Float floatField, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,floatField);
+    }
+
+    public void visit(Double doubleField, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,doubleField);
+    }
+
+    public void visit(String string, String fieldName, JSONObject jsonObject){
+        jsonObject.put(fieldName,string);
+    }
+
+    public void visit(List list, String fieldName, JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.addAll(list);
+        jsonObject.put(fieldName,jsonArray);
+    }
+    public void visit(Set set, String fieldName, JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.addAll(set);
+        jsonObject.put(fieldName,jsonArray);
+    }
+    public void visit(Queue queue, String fieldName, JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.addAll(queue);
+        jsonObject.put(fieldName,jsonArray);
+    }
+
+    public void visitArray(Object array, String fieldName, JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+        int length = Array.getLength(array);
+        for (int i = 0; i < length; i++) {
+                jsonArray.add(Array.get(array, i));
+            }
+        jsonObject.put(fieldName,jsonArray);
+    }
+    public void visitObject(Object object, String fieldName, JSONObject jsonObject){
+       jsonObject.put(fieldName,dispatch(object));
 
     }
 
     @Override
-    public String dispatch(Object object) {
-        String result = "";
-        try {
-            Method method = getMethod(object.getClass());
-            result = (String) method.invoke(this, object);
-            return result;
-
-
-        } catch (Exception e) { }
-        return result;
+    public JSONObject dispatch(Object object) {
+        JSONObject jsonObject = new JSONObject();
+        Field[] fields = object.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Method method = getMethod(field,object,jsonObject);
+                method.invoke(this, field.get(object),field.getName(),jsonObject);
+            } catch (Exception e) {
+            }
+        }
+        return jsonObject;
     }
 
-    protected Method getMethod(Class clazz) {
-        Class tempClass = clazz;
+    protected Method getMethod(Field field, Object object,JSONObject jsonObject) throws IllegalAccessException {
+
+        Class tempClass = field.get(object).getClass();
         Method method = null;
 
-        //Superclasses
+        //Попытка вызова нужного метода visit и дальнейший перебор суперклассов для вызова нужного метода
         while (method == null && tempClass != Object.class) {
             String methodName = "visit";
+
+            //todo: Попробовать найти более гибкое решение для массива
+            if (field.get(object).getClass().isArray()){
+                try {
+                    method = getClass().getMethod("visitArray", Object.class, String.class, JSONObject.class);
+                } catch (NoSuchMethodException e) {}
+                break;
+            }
             try {
-                method = getClass().getMethod(methodName, tempClass);
+                method = getClass().getMethod(methodName, tempClass, String.class,JSONObject.class);
             } catch (NoSuchMethodException e) {
                 tempClass = tempClass.getSuperclass();
             }
         }
-        //Interfaces
+        //Перебор интерфейсов для вызова нужного метода, если перебор по super не дал результатов
         if (tempClass == Object.class) {
-            Class[] interfaces = clazz.getInterfaces();
-            for (int i = 0; i < interfaces.length; i++) {
-                String methodName = "visit";
-                try {
-                    method = getClass().getMethod(methodName, interfaces[i]);
-                } catch (NoSuchMethodException e) {}
+            tempClass = field.get(object).getClass();
+            while (method == null && tempClass != Object.class) {
+                Class[] interfaces = tempClass.getInterfaces();
+                if (interfaces.length == 0) {
+                    tempClass = tempClass.getSuperclass();
+                    continue;
+                }
+                for (Class anInterface : interfaces) {
+                    String methodName = "visit";
+                    try {
+                        method = getClass().getMethod(methodName, anInterface, String.class, JSONObject.class);
+                        break;
+                    } catch (NoSuchMethodException e) {
+                        tempClass = tempClass.getSuperclass();
+                    }
+                }
             }
         }
         if (method == null) {
             try {
-                method = getClass().getMethod("visitObject", clazz);
+                method = getClass().getMethod("visitObject", Object.class, String.class, JSONObject.class);
             } catch (Exception e) {
                 // Can't happen
             }
