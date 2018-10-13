@@ -6,13 +6,13 @@ import org.json.simple.JSONObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class ObjectFieldsVisitor implements Visitor {
-
-//    private JSONObject jsonObject;
-
-//    public ObjectFieldsVisitor() {}
 
     public void visit(Byte byteField, String fieldName, JSONObject jsonObject){
         jsonObject.put(fieldName,byteField);
@@ -70,6 +70,7 @@ public class ObjectFieldsVisitor implements Visitor {
         JSONArray jsonArray = new JSONArray();
         int length = Array.getLength(array);
         for (int i = 0; i < length; i++) {
+
                 jsonArray.add(Array.get(array, i));
             }
         jsonObject.put(fieldName,jsonArray);
@@ -82,19 +83,19 @@ public class ObjectFieldsVisitor implements Visitor {
     @Override
     public JSONObject dispatch(Object object) {
         JSONObject jsonObject = new JSONObject();
-        Field[] fields = object.getClass().getDeclaredFields();
-        for (Field field : fields) {
+        List<Field> fields = getFieldsList(object);
+        fields.forEach(field ->  {
             try {
                 field.setAccessible(true);
-                Method method = getMethod(field,object,jsonObject);
+                Method method = getMethod(field,object);
                 method.invoke(this, field.get(object),field.getName(),jsonObject);
             } catch (Exception e) {
             }
-        }
+        });
         return jsonObject;
     }
 
-    protected Method getMethod(Field field, Object object,JSONObject jsonObject) throws IllegalAccessException {
+    protected Method getMethod(Field field, Object object) throws IllegalAccessException {
 
         Class tempClass = field.get(object).getClass();
         Method method = null;
@@ -144,5 +145,14 @@ public class ObjectFieldsVisitor implements Visitor {
             }
         }
         return method;
+    }
+
+    private List<Field> getFieldsList(Object object){
+        List<Field> fields = Arrays.stream(object.getClass().getDeclaredFields())
+                .filter(field->!Modifier.isStatic(field.getModifiers()))
+                .filter(field->!Modifier.isTransient(field.getModifiers()))
+                .collect(toList());
+        return  fields;
+
     }
 }

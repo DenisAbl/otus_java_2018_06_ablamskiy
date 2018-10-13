@@ -1,6 +1,8 @@
 package otus.visitor;
 
+import org.json.simple.JSONObject;
+
 public interface Visitor {
 
-    public String dispatch(Object o);
+    public JSONObject dispatch(Object o);
 }

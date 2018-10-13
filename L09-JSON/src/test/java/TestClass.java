@@ -1,5 +1,3 @@
-package otus;
-
 import java.util.*;
 
 public class TestClass {
@@ -21,7 +19,6 @@ public class TestClass {
     double firstDouble;
     Double secondDouble;
     String firstString;
-    Object object;
 
     int[] array;
 
@@ -32,7 +29,7 @@ public class TestClass {
     public TestClass(byte firstByte, Byte secondByte, boolean firstBoolean, Boolean secondBoolean, char firstChar,
                      char secondChar, short firstShort, Short secondShort, int firstInt, Integer secondInteger,
                      long firstLong, Long secondLong, float firstFloat, Float secondFloat, double firstDouble,
-                     Double secondDouble, String firstString, Object object, int[] array, List<String> list,
+                     Double secondDouble, String firstString, int[] array, List<String> list,
                      Set<String> set, Stack<Long> stack) {
         this.firstByte = firstByte;
         this.secondByte = secondByte;
@@ -51,7 +48,6 @@ public class TestClass {
         this.firstDouble = firstDouble;
         this.secondDouble = secondDouble;
         this.firstString = firstString;
-        this.object = object;
         this.array = array;
         this.list = list;
         this.set = set;
@@ -80,7 +76,6 @@ public class TestClass {
                 Objects.equals(secondFloat, testClass.secondFloat) &&
                 Objects.equals(secondDouble, testClass.secondDouble) &&
                 Objects.equals(firstString, testClass.firstString) &&
-                Objects.equals(object, testClass.object) &&
                 Arrays.equals(array, testClass.array) &&
                 Objects.equals(list, testClass.list) &&
                 Objects.equals(set, testClass.set) &&
@@ -91,7 +86,7 @@ public class TestClass {
     public int hashCode() {
         int result = Objects.hash(firstByte, secondByte, firstBoolean, secondBoolean, firstChar, secondChar, firstShort,
                                 secondShort, firstInt, secondInteger, firstLong, secondLong, firstFloat, secondFloat,
-                                firstDouble, secondDouble, firstString, object, list, set, stack);
+                                firstDouble, secondDouble, firstString, list, set, stack);
         result = 31 * result + Arrays.hashCode(array);
         return result;
     }
