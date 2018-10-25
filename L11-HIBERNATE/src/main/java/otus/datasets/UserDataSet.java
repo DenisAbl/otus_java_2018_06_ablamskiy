@@ -1,21 +1,31 @@
 package otus.datasets;
 
-import java.util.Objects;
+import javax.persistence.*;
+import java.util.List;
 
+@Entity
+@Table(name = "UserDataSet")
 public class UserDataSet extends DataSet {
 
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "age")
     private int age;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private AddressDataSet address;
-    private PhoneDataSet phoneNumber;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<PhoneDataSet> phoneNumbers;
 
     public  UserDataSet(){}
 
-    public UserDataSet(String name, int age, AddressDataSet address, PhoneDataSet phoneNumber) {
+    public UserDataSet(String name, int age, AddressDataSet address, List<PhoneDataSet> phoneNumbers) {
         this.name = name;
         this.age = age;
         this.address = address;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumbers = phoneNumbers;
     }
 
     public String getName() {
@@ -42,12 +52,12 @@ public class UserDataSet extends DataSet {
         this.address = address;
     }
 
-    public PhoneDataSet getPhoneNumber() {
-        return phoneNumber;
+    public List<PhoneDataSet> getPhoneNumber() {
+        return phoneNumbers;
     }
 
-    public void setPhoneNumber(PhoneDataSet phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhoneNumber(List<PhoneDataSet> phoneNumber) {
+        this.phoneNumbers = phoneNumber;
     }
 
     @Override
@@ -56,7 +66,7 @@ public class UserDataSet extends DataSet {
                 "name='" + name + '\'' +
                 ", age=" + age +
                 ", address=" + address +
-                ", phoneNumber=" + phoneNumber +
+                ", phoneNumber=" + phoneNumbers +
                 '}';
     }
 }
