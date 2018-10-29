@@ -27,7 +27,7 @@ public class DBServiceHibernateImpl implements DBService {
     private final SessionFactory sessionFactory;
     private Properties properties;
     private final String CONFIG_PATH = "src/main/resources/hibernate.properties";
-    private Configuration configuration;
+    private final Configuration configuration;
 
 
     public DBServiceHibernateImpl() {
