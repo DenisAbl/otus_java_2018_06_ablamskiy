@@ -11,18 +11,17 @@ public interface DBService {
 
     String getMetaData();
 
-    void addUsers(String... names) throws SQLException;
+    void saveUsers(String... names) throws SQLException;
 
-    String getUserName(int id) throws SQLException;
+    <T extends DataSet> String getUserName(int id, Class<T> clazz) throws SQLException;
 
-    List<String> getAllNames() throws SQLException;
+    <T extends DataSet> List<String> getAllNames(Class<T> clazz) throws SQLException;
 
     void deleteTables() throws SQLException;
-
-    <T extends DataSet> List<T> getAllUsers() throws SQLException;
-
 
     <T extends DataSet> void save(T user);
 
     <T extends DataSet> T load(long id, Class<T> clazz);
+
+    <T extends DataSet> List<T> getAllUsers(Class<T> clazz) throws SQLException;;
 }

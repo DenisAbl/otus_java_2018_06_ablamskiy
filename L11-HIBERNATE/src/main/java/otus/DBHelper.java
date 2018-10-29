@@ -16,7 +16,7 @@ public class DBHelper {
             String url = "jdbc:mysql://" +      //db type
                     "localhost:" +              //host name
                     "3306/" +                   //port
-                    "users_db?" +               //db name
+                    "users?" +                  //db name
                     "user=root&" +              //login
                     "password=Festo000&" +      //password
                     "useSSL=false&" +           //do not use Secure Sockets Layer

@@ -57,7 +57,7 @@ public class MyDBService implements DBService {
     }
 
     @Override
-    public void addUsers(String... names) throws SQLException {
+    public void saveUsers(String... names) throws SQLException {
         Executor executor = new OrmExecutor(getConnection());
         String query = String.format("insert into %s (name) values(?)",userClass.getSimpleName());
         executor.execUpdate(query, statement -> {
@@ -69,24 +69,24 @@ public class MyDBService implements DBService {
     }
 
     @Override
-    public <T extends DataSet> List<T> getAllUsers() throws SQLException {
+    public <T extends DataSet> List<T> getAllUsers(Class<T> clazz) throws SQLException {
         Executor executor = new OrmExecutor(getConnection());
-        String query = String.format("select * from %s", userClass.getSimpleName());
+        String query = String.format("select * from %s", clazz.getSimpleName());
         List<T> usersList = new ArrayList<>();
         return executor.execQuery(query,resultSet -> {
 
             while(!resultSet.isLast()){
                 resultSet.next();
-                usersList.add(getUser(resultSet, (Class<T>) userClass));
+                usersList.add(getUser(resultSet, clazz));
             }
             return usersList;
         });
     }
 
     @Override
-    public String getUserName(int id) throws SQLException {
+    public <T extends DataSet> String getUserName(int id, Class<T> clazz) throws SQLException {
         Executor executor = new OrmExecutor(getConnection());
-        String query = String.format("select name from %s where id=%s",userClass.getSimpleName(),id);
+        String query = String.format("select name from %s where id=%s",clazz.getSimpleName(),id);
         return executor.execQuery(query, resultSet -> {
             resultSet.next();
             return resultSet.getString("name");
@@ -94,9 +94,9 @@ public class MyDBService implements DBService {
     }
 
     @Override
-    public List<String> getAllNames() throws SQLException {
+    public <T extends DataSet> List<String> getAllNames(Class<T> clazz) throws SQLException {
         Executor executor = new OrmExecutor(getConnection());
-        String query = String.format("select name from %s",userClass.getSimpleName());
+        String query = String.format("select name from %s",clazz.getSimpleName());
         return executor.execQuery(query, resultSet -> {
             List<String> nameList = new ArrayList<>();
             while(!resultSet.isLast()){
