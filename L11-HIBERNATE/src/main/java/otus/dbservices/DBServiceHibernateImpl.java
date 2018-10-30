@@ -113,10 +113,11 @@ public class DBServiceHibernateImpl implements DBService {
 
     @Override
     public <T extends DataSet> void save(T user) {
-        try (Session session = sessionFactory.openSession()){
+        runTransaction(session -> {
             var dao = new DataSetDao(session);
             dao.save(user);
-        }
+            return true;
+        });
     }
 
     @Override
