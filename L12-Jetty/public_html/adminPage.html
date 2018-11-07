@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Jetty web server</title>
+</head>
+<body>
+<p>Add user</p>
+
+<form action="/adminPage" method="POST">
+
+    Name: <input type="text" name="name"/>
+    Age: <input type="text" name="age"/>
+    Address: <input type="text" name="address"/>
+    Phone: <input type="text" name="phone"/>
+
+    <input type="submit" value="Add user">
+</form>
+
+<form action="/userPage" method="GET">
+    <p> Get user data by id </p>
+    Id: <input type="text" name="id"/>
+    <input type="submit" value="Get user data">
+</form>
+
+<p>Users Number: ${usersNumber}</p>
+
+</body>
+</html>
