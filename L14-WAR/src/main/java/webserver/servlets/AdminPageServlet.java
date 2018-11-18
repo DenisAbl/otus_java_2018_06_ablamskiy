@@ -27,39 +27,46 @@ public class AdminPageServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        validateUser(request);
-        Map<String, Object> pageVariables = createPageVariablesMap(dbService);
-        String page = templateProcessor.getPage(ADMIN_PAGE_TEMPLATE, pageVariables);
-        response.getWriter().println(page);
-        response.setStatus(HttpServletResponse.SC_OK);
+        if (request.getSession().getAttribute("login") != null) {
+            Map<String, Object> pageVariables = createPageVariablesMap(dbService);
+            String page = templateProcessor.getPage(ADMIN_PAGE_TEMPLATE, pageVariables);
+            response.getWriter().println(page);
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+        else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
+        if (request.getSession().getAttribute("login") != null) {
+            String name = request.getParameter("name");
+            String login = request.getParameter("login");
+            if (dbService.existLogin(login, UserDataSet.class)){
+                response.getWriter().println("Login unavailable, please try another one");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
 
-        String name = request.getParameter("name");
-        String login = request.getParameter("login");
-        if (dbService.existLogin(login, UserDataSet.class)){
-            response.getWriter().println("Login unavailable, please try another one");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            int age;
+            try{
+            age = Integer.parseInt(request.getParameter("age"));}
+            catch(NumberFormatException e){
+                response.getWriter().println("Incorrect age format");
+                return;
+            }
+            AddressDataSet address = new AddressDataSet(request.getParameter("address"));
+            List<PhoneDataSet> phone = new ArrayList<>();
+            phone.add(new PhoneDataSet(request.getParameter("phone")));
+            dbService.save(new UserDataSet(login, name, age, address,phone));
+            response.getWriter().println("User added");
+            response.setStatus(HttpServletResponse.SC_OK);}
+        else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Unauthorized access");
         }
-
-        int age;
-        try{
-        age = Integer.parseInt(request.getParameter("age"));}
-        catch(NumberFormatException e){
-            response.getWriter().println("Incorrect age format");
-            return;
-        }
-        AddressDataSet address = new AddressDataSet(request.getParameter("address"));
-        List<PhoneDataSet> phone = new ArrayList<>();
-        phone.add(new PhoneDataSet(request.getParameter("phone")));
-        dbService.save(new UserDataSet(login, name, age, address,phone));
-        response.getWriter().println("User added");
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private static Map<String, Object> createPageVariablesMap(DBService service) {
@@ -70,7 +77,7 @@ public class AdminPageServlet extends HttpServlet {
     }
 
     private void saveToSession(HttpServletRequest request, String login){
-
+        request.getSession().setAttribute("login", login);
     }
 
     private void validateUser(HttpServletRequest request){

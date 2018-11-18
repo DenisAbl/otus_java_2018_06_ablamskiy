@@ -1,3 +1,5 @@
+import dbservice.datasets.AddressDataSet;
+import dbservice.datasets.UserDataSet;
 import dbservice.dbservices.DBService;
 import dbservice.dbservices.DBServiceHibernateImpl;
 import org.eclipse.jetty.server.Server;
@@ -8,6 +10,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import webserver.servlets.AdminPageServlet;
 import webserver.servlets.TemplateProcessor;
 import webserver.servlets.UserPageServlet;
+
+import java.util.ArrayList;
 
 public class Main {
 
@@ -20,6 +24,7 @@ public class Main {
         resourceHandler.setWelcomeFiles(new String[]{"login.html"});
 
         DBService dbService = new DBServiceHibernateImpl();
+        dbService.save(new UserDataSet("admin","admin",0,new AddressDataSet("-"),new ArrayList<>()));
         TemplateProcessor templateProcessor = new TemplateProcessor();
 
         ServletContextHandler servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
