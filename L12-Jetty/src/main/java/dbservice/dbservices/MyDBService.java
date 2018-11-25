@@ -89,6 +89,16 @@ public class MyDBService implements DBService {
     }
 
     @Override
+    public <T extends DataSet> boolean existLogin(String login, Class<T> clazz) {
+        return false;
+    }
+
+    @Override
+    public <T extends DataSet> T getUserByLogin(String login, Class<T> clazz) {
+        return null;
+    }
+
+    @Override
     public <T extends DataSet> String getUserName(int id, Class<T> clazz) throws SQLException {
         Executor executor = new OrmExecutor(getConnection());
         String query = String.format("select name from %s where id=%s",clazz.getSimpleName(),id);

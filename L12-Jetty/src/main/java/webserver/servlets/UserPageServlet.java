@@ -2,7 +2,6 @@ package webserver.servlets;
 
 import dbservice.datasets.UserDataSet;
 import dbservice.dbservices.DBService;
-import dbservice.dbservices.DBServiceHibernateImpl;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,16 +14,13 @@ public class UserPageServlet extends HttpServlet {
 
     private DBService dbService;
     private TemplateProcessor templateProcessor;
-    private static final String USER_PAGE_TEMPLATE = "userPage.html";
-
-//    public UserPageServlet() throws IOException {
-//        this(new DBServiceHibernateImpl(),new TemplateProcessor());
-//    }
 
     public UserPageServlet(DBService dbService, TemplateProcessor templateProcessor){
         this.dbService = dbService;
         this.templateProcessor = templateProcessor;
     }
+
+    private static final String USER_PAGE_TEMPLATE = "userPage.html";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -42,7 +38,7 @@ public class UserPageServlet extends HttpServlet {
         UserDataSet user;
         try{
         long id = Long.parseLong(request.getParameter("id"));
-        user = service.load(id,UserDataSet.class);}
+        user = service.load(id, UserDataSet.class);}
         catch  (NumberFormatException | NullPointerException e){
             response.getWriter().println("Incorrect id");
             return null;
@@ -52,6 +48,7 @@ public class UserPageServlet extends HttpServlet {
         pageVariables.put("age", user.getAge());
         pageVariables.put("address", user.getAddress().getStreet());
         pageVariables.put("phones", user.getPhoneNumber().toString());
+        pageVariables.put("login",user.getLogin());
 
         return pageVariables;
     }

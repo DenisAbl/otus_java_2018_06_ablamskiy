@@ -1,16 +1,16 @@
 package dbservice.dbservices;
 
+import dbservice.datasets.AddressDataSet;
+import dbservice.datasets.DataSet;
+import dbservice.datasets.PhoneDataSet;
+import dbservice.datasets.UserDataSet;
+import dbservice.dbservices.DAO.DataSetDao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import dbservice.datasets.AddressDataSet;
-import dbservice.datasets.DataSet;
-import dbservice.datasets.PhoneDataSet;
-import dbservice.datasets.UserDataSet;
-import dbservice.dbservices.DAO.DataSetDao;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,11 +75,12 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public void saveUsers(String... names) throws SQLException {
         runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             UserDataSet user;
             for (String name: names){
                 user = new UserDataSet();
                 user.setName(name);
+                user.setLogin(name+user.hashCode());
                 dao.save(user);
             }
             return true;
@@ -89,7 +90,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> String getUserName(int id, Class<T> clazz) throws SQLException {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.readUserNameById(id,clazz);
         });
     }
@@ -97,7 +98,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> List<String> getAllNames(Class<T> clazz) throws SQLException {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.readAllNames(clazz);
         });
     }
@@ -114,7 +115,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> void save(T user) {
         runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             dao.save(user);
             return true;
         });
@@ -123,7 +124,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> T load(long id, Class<T> clazz) {
         return runTransaction(session -> {
-            var dataSetDao = new DataSetDao(session);
+            DataSetDao dataSetDao = new DataSetDao(session);
             return dataSetDao.read(id,clazz);
         });
     }
@@ -131,15 +132,31 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> List<T> getAllUsers(Class<T> clazz) {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.readAllUsers(clazz);
         });
     }
 
     public <T extends DataSet> long getUsersNumber(Class<T> clazz) {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.getUsersNumber(clazz);
+        });
+    }
+
+    public <T extends DataSet> boolean existLogin(String login, Class<T> clazz){
+        return runTransaction(session -> {
+            DataSetDao dao = new DataSetDao(session);
+           List<String> logins = dao.getAllLogins(clazz);
+           return logins.contains(login);
+        });
+    }
+
+    @Override
+    public <T extends DataSet> T getUserByLogin(String login, Class<T> clazz) {
+        return runTransaction(session -> {
+            DataSetDao dataSetDao = new DataSetDao(session);
+            return dataSetDao.readUserByLogin(login,clazz);
         });
     }
 

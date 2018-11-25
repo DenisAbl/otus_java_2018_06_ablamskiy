@@ -25,5 +25,9 @@ public interface DBService {
 
     <T extends DataSet> List<T> getAllUsers(Class<T> clazz) throws SQLException;
 
-    public <T extends DataSet> long getUsersNumber(Class<T> clazz);
+    <T extends DataSet> long getUsersNumber(Class<T> clazz);
+
+    <T extends DataSet> boolean existLogin(String login, Class<T> clazz);
+
+    <T extends DataSet> T getUserByLogin(String login, Class<T> clazz);
 }
