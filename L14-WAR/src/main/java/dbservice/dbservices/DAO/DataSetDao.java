@@ -26,9 +26,9 @@ public class DataSetDao {
 
     public <T extends DataSet> List<T> readAllUsers(Class<T> clazz) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<T> criteria = builder.createQuery(clazz);
-        criteria.from(clazz);
-        return session.createQuery(criteria).list();
+        CriteriaQuery<T> query = builder.createQuery(clazz);
+        query.from(clazz);
+        return session.createQuery(query).list();
     }
 
     public <T extends DataSet> List<String> readAllNames(Class<T> clazz) {
@@ -61,5 +61,13 @@ public class DataSetDao {
         Root<T> root = query.from(clazz);
         query.select(root.get("login"));
         return session.createQuery(query).list();
+    }
+
+    public <T extends DataSet> T readUserByLogin(String login, Class<T> clazz) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> query = builder.createQuery(clazz);
+        Root<T> root = query.from(clazz);
+        query.select(root).where(builder.equal(root.get("login"),login));
+        return session.createQuery(query).getSingleResult();
     }
 }

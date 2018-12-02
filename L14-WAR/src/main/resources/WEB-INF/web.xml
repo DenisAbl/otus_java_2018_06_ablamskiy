@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app>
+
+    <display-name>L14</display-name>
+    <description>WAR HW</description>
+
+    <servlet>
+        <servlet-name>adminPageServlet</servlet-name>
+        <servlet-class>webserver.servlets.AdminPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>adminPageServlet</servlet-name>
+        <url-pattern>/adminPage</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>userPageServlet</servlet-name>
+        <servlet-class>webserver.servlets.UserPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>userPageServlet</servlet-name>
+        <url-pattern>/userPage</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:SpringBeans.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>

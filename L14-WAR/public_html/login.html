@@ -5,10 +5,20 @@
     <title>Login page</title>
 </head>
 <body>
-    <form action="/adminPage" method="GET">
-        login: <input type="text" name="login"/>
-        password: <input type="text" name="password"/>
-        <input type="submit" value="log in"/>
-    </form>
+<form action="/j_security_check" method="POST">
+    <table>
+        <tr>
+            <td>Name</td>
+            <td><input type="text" name="j_username"></td>
+        </tr>
+        <tr>
+            <td>Password</td>
+            <td><input type="password" name="j_password"></td>
+        </tr>
+        <tr>
+            <td><button type="submit">Login</button></td>
+        </tr>
+    </table>
+</form>
 </body>
 </html>

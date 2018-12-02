@@ -2,8 +2,11 @@ package webserver.servlets;
 
 import dbservice.datasets.UserDataSet;
 import dbservice.dbservices.DBService;
-import dbservice.dbservices.DBServiceHibernateImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,20 +14,25 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+//@WebServlet(name = "userPageServlet",urlPatterns = "/userPage")
 public class UserPageServlet extends HttpServlet {
 
-    private final DBService dbService;
-    private final TemplateProcessor templateProcessor;
+    @Autowired
+    private DBService dbService;
+    @Autowired
+    private TemplateProcessor templateProcessor;
+
     private static final String USER_PAGE_TEMPLATE = "userPage.html";
 
-    public UserPageServlet(DBService dbService, TemplateProcessor templateProcessor){
-        this.dbService = dbService;
-        this.templateProcessor = templateProcessor;
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         Map<String, Object> pageVariables = createPageVariablesMap(request, response, dbService);
         if (pageVariables != null){
         String page = templateProcessor.getPage(USER_PAGE_TEMPLATE, pageVariables);
@@ -49,6 +57,7 @@ public class UserPageServlet extends HttpServlet {
         pageVariables.put("age", user.getAge());
         pageVariables.put("address", user.getAddress().getStreet());
         pageVariables.put("phones", user.getPhoneNumber().toString());
+        pageVariables.put("login",user.getLogin());
 
         return pageVariables;
     }

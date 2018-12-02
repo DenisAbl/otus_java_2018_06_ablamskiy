@@ -25,30 +25,25 @@ public class DBServiceHibernateImplTest {
     public void saveTest(){
         List<PhoneDataSet> list = new ArrayList<>();
         list.add(new PhoneDataSet("2-12-85-06"));
-        service.save(new UserDataSet("John Doe","John Doe",34,new AddressDataSet("Leninskiy,100"),new ArrayList<>()));
-        service.save(new UserDataSet("Sam One","Sam One",25,new AddressDataSet("Aeroport,123"),new ArrayList<>()));
+        service.save(new UserDataSet("John Doe","John Doe",34,new AddressDataSet("Leninskiy,100"),new ArrayList<>(),"1"));
+        service.save(new UserDataSet("Sam One","Sam One",25,new AddressDataSet("Aeroport,123"),new ArrayList<>(),"1"));
         Assert.assertEquals("save failed","Sam One", service.load(2,UserDataSet.class).getName());
     }
 
     @Test
     public void loadTest(){
-        service.save(new UserDataSet("John Doe","John Doe",34,new AddressDataSet("Leninskiy,100"),new ArrayList<>()));
-        service.save(new UserDataSet("Sam One","Sam One",25,new AddressDataSet("Aeroport,123"),new ArrayList<>()));
+        service.save(new UserDataSet("John Doe","John Doe",34,new AddressDataSet("Leninskiy,100"),new ArrayList<>(),"1"));
+        service.save(new UserDataSet("Sam One","Sam One",25,new AddressDataSet("Aeroport,123"),new ArrayList<>(),"1"));
         UserDataSet loadedUserDataSet = service.load(1,UserDataSet.class);
         Assert.assertEquals("load failre", 34, loadedUserDataSet.getAge());
     }
 
     @Test
     public void getAllUsersTest() throws SQLException {
-        service.save(new UserDataSet("John Doe","John Doe",34,new AddressDataSet("Leninskiy,100"),new ArrayList<>()));
-        service.save(new UserDataSet("Sam One","Sam One",25,new AddressDataSet("Aeroport,123"),new ArrayList<>()));
+        service.save(new UserDataSet("John Doe","John Doe",34,new AddressDataSet("Leninskiy,100"),new ArrayList<>(),"1"));
+        service.save(new UserDataSet("Sam One","Sam One",25,new AddressDataSet("Aeroport,123"),new ArrayList<>(),"1"));
         Assert.assertEquals("getAllUsers failure", 2, service.getAllUsers(UserDataSet.class).size());
         Assert.assertEquals("getAllUsers failure", "Aeroport,123", service.getAllUsers(UserDataSet.class).get(1).getAddress().getStreet());
-    }
-
-    @Test
-    public void deleteTablesTest() throws SQLException {
-        service.deleteTables();
     }
 
     @Test

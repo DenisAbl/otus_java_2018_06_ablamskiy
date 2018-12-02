@@ -1,5 +1,6 @@
 package dbservice.dbservices;
 
+import cacheservices.SoftReferenceCache;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -11,6 +12,7 @@ import dbservice.datasets.DataSet;
 import dbservice.datasets.PhoneDataSet;
 import dbservice.datasets.UserDataSet;
 import dbservice.dbservices.DAO.DataSetDao;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,12 +23,12 @@ import java.util.Properties;
 import java.util.function.Function;
 
 //SET GLOBAL time_zone = '+3:00'
-
 public class DBServiceHibernateImpl implements DBService {
 
+    private SoftReferenceCache myCache;
     private final SessionFactory sessionFactory;
     private Properties properties;
-    private final String CONFIG_PATH = "src/main/resources/hibernate.properties";
+    private final String CONFIG_PATH = "/hibernate.properties";
     private final Configuration configuration;
 
 
@@ -35,7 +37,7 @@ public class DBServiceHibernateImpl implements DBService {
         properties = new Properties();
 
         try {
-            properties.load(new FileInputStream(new File(CONFIG_PATH)));
+            properties.load(DBServiceHibernateImpl.class.getResourceAsStream(CONFIG_PATH));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,11 +77,12 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public void saveUsers(String... names) throws SQLException {
         runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             UserDataSet user;
             for (String name: names){
                 user = new UserDataSet();
                 user.setName(name);
+                user.setLogin(name+user.hashCode());
                 dao.save(user);
             }
             return true;
@@ -89,7 +92,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> String getUserName(int id, Class<T> clazz) throws SQLException {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.readUserNameById(id,clazz);
         });
     }
@@ -97,7 +100,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> List<String> getAllNames(Class<T> clazz) throws SQLException {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.readAllNames(clazz);
         });
     }
@@ -114,7 +117,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> void save(T user) {
         runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             dao.save(user);
             return true;
         });
@@ -123,7 +126,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> T load(long id, Class<T> clazz) {
         return runTransaction(session -> {
-            var dataSetDao = new DataSetDao(session);
+            DataSetDao dataSetDao = new DataSetDao(session);
             return dataSetDao.read(id,clazz);
         });
     }
@@ -131,23 +134,31 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public <T extends DataSet> List<T> getAllUsers(Class<T> clazz) {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.readAllUsers(clazz);
         });
     }
 
     public <T extends DataSet> long getUsersNumber(Class<T> clazz) {
         return runTransaction(session -> {
-            var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
             return dao.getUsersNumber(clazz);
         });
     }
 
     public <T extends DataSet> boolean existLogin(String login, Class<T> clazz){
         return runTransaction(session -> {
-           var dao = new DataSetDao(session);
+            DataSetDao dao = new DataSetDao(session);
            List<String> logins = dao.getAllLogins(clazz);
            return logins.contains(login);
+        });
+    }
+
+    @Override
+    public <T extends DataSet> T getUserByLogin(String login, Class<T> clazz) {
+        return runTransaction(session -> {
+            DataSetDao dataSetDao = new DataSetDao(session);
+            return dataSetDao.readUserByLogin(login,clazz);
         });
     }
 
