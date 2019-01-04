@@ -5,12 +5,17 @@ import java.util.concurrent.*;
 
 public class MultiThreadSort {
 
+    private final static int NUMBER_OF_THREADS = 4;
+
     public static int[] multiThreadSort(int[] sourceArray) throws InterruptedException {
-        List<int[]> arrays = getDividedArrays(sourceArray,4);
-        sortDividedArrays(arrays);
-        int[] temp1 = mergeSortedArrays(arrays.get(0), arrays.get(1));
-        int[] temp2 = mergeSortedArrays(arrays.get(2),arrays.get(3));
-        return mergeSortedArrays(temp1,temp2);
+
+        List<int[]> arrays = getDividedArrays(sourceArray,NUMBER_OF_THREADS);
+        sortDividedArrays(arrays,NUMBER_OF_THREADS);
+        while(arrays.size() != 1){
+             arrays.add(mergeSortedArrays(arrays.get(0),arrays.get(1)));
+             arrays.subList(0,2).clear();
+        }
+        return arrays.get(0);
     }
 
     private static int[] mergeSortedArrays(int[] a, int[] b){
@@ -48,13 +53,14 @@ public class MultiThreadSort {
          return list;
     }
 
-    private static void sortDividedArrays(List<int[]> arrays) throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        executor.submit(()->{
-            arrays.forEach(Arrays::sort);
-        });
+    private static void sortDividedArrays(List<int[]> arrays, int threadsNumber) throws InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+
+        arrays.forEach(array ->
+                executor.submit(() -> Arrays.sort(array)));
+
         executor.shutdown();
-        executor.awaitTermination(1000,TimeUnit.MILLISECONDS);
+        executor.awaitTermination(10000,TimeUnit.MILLISECONDS);
     }
 
 }

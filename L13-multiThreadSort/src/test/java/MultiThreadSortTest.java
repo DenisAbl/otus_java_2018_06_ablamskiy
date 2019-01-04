@@ -14,7 +14,7 @@ public class MultiThreadSortTest {
         int[] source = createRandomArray(1_000_000);
         long start = System.nanoTime();
         result = MultiThreadSort.multiThreadSort(source);
-        System.out.println((System.nanoTime() - start) / 1000000 + " ms");
+        System.out.println((System.nanoTime() - start) / 1_000_000 + " ms");
         Arrays.sort(source);
         Assert.assertArrayEquals(result,source);
 
