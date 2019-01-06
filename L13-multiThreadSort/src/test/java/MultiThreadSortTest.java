@@ -11,9 +11,9 @@ public class MultiThreadSortTest {
     @Test
     public void multiThreadSortTest() throws InterruptedException {
         int[] result;
-        int[] source = createRandomArray(1_000_000);
+        int[] source = createRandomArray(10_000_000);
         long start = System.nanoTime();
-        result = MultiThreadSort.multiThreadSort(source);
+        result = MultiThreadSort.multiThreadSort(source,4);
         System.out.println((System.nanoTime() - start) / 1_000_000 + " ms");
         Arrays.sort(source);
         Assert.assertArrayEquals(result,source);
@@ -22,16 +22,16 @@ public class MultiThreadSortTest {
     @Test
     public void SortTest() {
         long start = System.nanoTime();
-        int[] result = createRandomArray(1_000_000);
+        int[] result = createRandomArray(10_000_000);
         Arrays.sort(result);
-        System.out.println((System.nanoTime() - start)/1000000 + " ms");
+        System.out.println((System.nanoTime() - start)/1_000_000 + " ms");
     }
 
     private int[] createRandomArray(int numberOfElements){
         Random random = new Random(System.currentTimeMillis());
         int[] array = new int[numberOfElements];
         for (int i = 0; i < numberOfElements; i++){
-            array[i] = -100000 + random.nextInt(200000);
+            array[i] = -1000000 + random.nextInt(2000000);
         }
         return array;
     }

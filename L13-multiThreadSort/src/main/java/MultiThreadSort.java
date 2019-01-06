@@ -5,20 +5,20 @@ import java.util.concurrent.*;
 
 public class MultiThreadSort {
 
-    private final static int NUMBER_OF_THREADS = 4;
 
-    public static int[] multiThreadSort(int[] sourceArray) throws InterruptedException {
+    public static int[] multiThreadSort(int[] sourceArray, int threadsNumber) throws InterruptedException {
 
-        List<int[]> arrays = getDividedArrays(sourceArray,NUMBER_OF_THREADS);
-        sortDividedArrays(arrays,NUMBER_OF_THREADS);
+        List<int[]> arrays = getDividedArrays(sourceArray,threadsNumber);
+        sortDividedArrays(arrays, threadsNumber);
         while(arrays.size() != 1){
-             arrays.add(mergeSortedArrays(arrays.get(0),arrays.get(1)));
-             arrays.subList(0,2).clear();
+            arrays.add(mergeSortedArrays(arrays.get(0),arrays.get(1)));
+            arrays.subList(0,2).clear();
         }
         return arrays.get(0);
     }
 
     private static int[] mergeSortedArrays(int[] a, int[] b){
+
         int[] mergedArray = new int[a.length + b.length];
         int indexA = 0;
         int indexB = 0;
@@ -54,7 +54,7 @@ public class MultiThreadSort {
     }
 
     private static void sortDividedArrays(List<int[]> arrays, int threadsNumber) throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        ExecutorService executor = Executors.newFixedThreadPool(threadsNumber);
 
         arrays.forEach(array ->
                 executor.submit(() -> Arrays.sort(array)));
