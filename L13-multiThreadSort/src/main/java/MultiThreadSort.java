@@ -5,10 +5,16 @@ import java.util.concurrent.*;
 
 public class MultiThreadSort {
 
+    public static int[] intArraySort(int[] sourceArray, int threadsNumber) throws InterruptedException {
 
-    public static int[] multiThreadSort(int[] sourceArray, int threadsNumber) throws InterruptedException {
+        if (threadsNumber <= 0) {
+            throw new IncorrectThreadNumberException("Thread quantity should be be a positive number.");
+        }
+
+        if(threadsNumber > sourceArray.length) threadsNumber = sourceArray.length;
 
         List<int[]> arrays = getDividedArrays(sourceArray,threadsNumber);
+//        arrays.forEach(array -> sortDividedArrays(array,threadsNumber));
         sortDividedArrays(arrays, threadsNumber);
         while(arrays.size() != 1){
             arrays.add(mergeSortedArrays(arrays.get(0),arrays.get(1)));
